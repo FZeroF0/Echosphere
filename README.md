@@ -59,8 +59,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/yourusername/echosphere-messaging-app.git](https://github.com/yourusername/echosphere-messaging-app.git)
-    cd echosphere-messaging-app
+    git clone [https://github.com/FZeroF0/Echosphere.git](https://github.com/FZeroF0/Echosphere.git)
+    cd Echosphere
     ```
 
 2.  **Create and activate a virtual environment:**
@@ -89,7 +89,6 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```bash
     pip install -r requirements.txt
     ```
-    (To generate `requirements.txt` if you don't have it yet: `pip freeze > requirements.txt`)
 
 4.  **Set up Environment Variables:**
     Create a file named `.env` in the root directory of your project (the same folder as `app.py`). This file will store your Flask `SECRET_KEY`.
@@ -109,7 +108,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 5.  **Run the Flask application:**
     Ensure your virtual environment is active.
     ```bash
-    export FLASK_APP=app.py # Set the Flask application entry point
+    export FLASK_APP=app.py
     flask run
     ```
     The application will typically be accessible at `http://127.0.0.1:5000/`.
@@ -131,7 +130,6 @@ The `app.py` script is designed to automatically create the `app.db` file and al
 This project is a work in progress, and the following key enhancements are planned or highly recommended to improve its functionality, security, and scalability:
 
 * **Security (Critical):**
-    * Implement **strong password hashing** using `werkzeug.security.generate_password_hash` during registration and `check_password_hash` during login. *(Note: This project is being updated to reflect this critical security best practice.)*
     * Add more robust server-side input validation and sanitization to prevent common vulnerabilities like SQL injection and Cross-Site Scripting (XSS).
 * **Real-time Communication:**
     * Fully integrate **Flask-SocketIO** for true instant, bidirectional messaging. Replace the current 5-second polling mechanism with WebSocket-based push notifications for real-time updates.
