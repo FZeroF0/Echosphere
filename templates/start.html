@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjJpZJmZLz+Fj7wRwxKBsJ8XzYyQzC/i6FUeCDiE6gD8/23D" crossorigin="anonymous">
+    <style>
+        body {
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            background-color: #f4f7f6; /* Consistent background with other pages */
+            display: flex; /* Use flexbox to center content vertically */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333; /* Consistent text color */
+        }
+        .card {
+            background-color: #ffffff; /* White card background */
+            border-radius: 10px; /* Slightly rounded corners */
+            box-shadow: 0 8px 16px rgba(0,0,0,.1); /* More pronounced shadow for depth */
+            padding: 2.5rem; /* Increased padding */
+            max-width: 450px; /* Limit card width for better form presentation */
+            width: 100%; /* Ensure responsiveness */
+        }
+        .card-title {
+            color: #2c3e50; /* Darker title color */
+            font-weight: 600;
+            margin-bottom: 2rem; /* More space below title */
+        }
+        .form-label { /* Keeping this for consistency, though not explicitly used for labels now */
+            color: #34495e; /* Darker label color */
+            font-weight: 500;
+        }
+        /* Consistent button styling */
+        .btn-primary {
+            background-color: #3498db; /* A vibrant blue for primary actions */
+            border-color: #3498db;
+            color: #ffffff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            padding: .6rem 1.2rem; /* Consistent button padding */
+            font-size: 1.05rem; /* Consistent button font size */
+            font-weight: 600; /* Consistent button font weight */
+            border-radius: .3rem; /* Consistent button border radius */
+        }
+        .btn-primary:hover {
+            background-color: #2980b9; /* Slightly darker on hover */
+            border-color: #2980b9;
+        }
+        a {
+            color: #3498db; /* Link color matching primary button */
+            text-decoration: none;
+            font-weight: 500; /* Make links a bit bolder */
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1050; /* Above most other content */
+            width: 80%;
+            max-width: 500px;
+        }
+        /* Styling for input placeholders to match overall theme */
+        input::placeholder {
+            color: #7f8c8d; /* Muted color for placeholder */
+            opacity: 1; /* Ensure it's not faded by default */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="alertContainer" class="alert-container"></div>
+    <center>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12"> <div class="card">
+                    <h1 class="card-title text-center">Register</h1>
+                    <form action="/register" method="POST" id="registrationForm">
+                        <div class="mb-3">
+                            <input type="text" id="name" placeholder="Enter your Name:" name="name" class="form-control form-control-lg" required> </div><br>
+                        <div class="mb-3">
+                            <input type="email" id="email" placeholder="Enter your Email:" name="email" class="form-control form-control-lg" required> </div><br>
+                        <div class="mb-4"> <input type="password" id="password" placeholder="Enter your Password:" name="password" class="form-control form-control-lg" required> </div><br>
+                        <div class="d-grid gap-2 mb-3"> <button type="submit" class="btn btn-primary">Register</button> </div>
+                    </form><br>
+                    <p class="text-center">
+                        <a href="/login">Already have an account? Login Here</a> </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </center>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.classList.add('alert', `alert-${type}`, 'alert-dismissible', 'fade', 'show');
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            alertContainer.innerHTML = ''; // Clear previous alerts
+            alertContainer.appendChild(alertDiv);
+
+            // Auto-dismiss after 5 seconds for non-error alerts
+            if (type !== 'danger') {
+                setTimeout(() => {
+                    const bootstrapAlert = bootstrap.Alert.getInstance(alertDiv);
+                    if (bootstrapAlert) {
+                        bootstrapAlert.close();
+                    }
+                }, 5000);
+            }
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const form = event.target;
+            const formData = new FormData(form);
+            const registerButton = form.querySelector('button[type="submit"]');
+
+            registerButton.disabled = true; // Disable button during submission
+            showAlert('Registering...', 'info'); // Show "in progress" alert
+
+            fetch(form.action, {
+                method: form.method,
+                body: new URLSearchParams(formData) // For x-www-form-urlencoded
+            })
+            .then(response => response.json()) // Always expect JSON
+            .then(data => {
+                showAlert(data.message, data.status); // Display alert based on status from backend
+                if (data.status === 'success') {
+                    form.reset(); // Clear form on success
+                    setTimeout(() => {
+                        window.location.href = '/login'; // Redirect to login page
+                    }, 2000); // Redirect after 2 seconds
+                }
+                registerButton.disabled = false; // Re-enable button
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An unexpected error occurred. Please try again.', 'danger');
+                registerButton.disabled = false; // Re-enable button
+            });
+        });
+    </script>
+</body>
+</html>
